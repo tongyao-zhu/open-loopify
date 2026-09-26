@@ -1,0 +1,54 @@
+[project]
+name = "open-loopify"
+version = "0.1.0"
+description = "Open looped language models: loop a pretrained transformer's layers and mid-train it, on nanotron"
+authors = [{name = "Tongyao Zhu"}]
+readme = "README.md"
+requires-python = "~=3.10"
+classifiers = [
+    "Topic :: Software Development"
+]
+dependencies = [
+    "torch==2.6.0",
+    "numpy",
+    "transformers==4.57.1",
+    "datasets",
+    "datatrove==0.9.0",
+    "safetensors",
+    "dacite",
+    "pyyaml",
+    "packaging",
+    "tqdm",
+    "psutil",
+    "einops",
+    "pybind11",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]  # list of folders that contain the packages (["."] by default)
+
+[tool.ruff]
+line-length = 119
+ignore = ["C901","E501"] # E501 ignores length violation handled by black
+select = ["C","E","F","I","W"]
+ignore-init-module-imports = true
+
+[project.optional-dependencies]
+dev = [
+    "pre-commit",
+    "pylint"
+]
+
+test = [
+    "pytest",
+    "pytest-xdist",
+    "numba",
+]
+
+[build-system]
+requires = [
+    "setuptools",
+]
+
+[pytest]
+norecursedirs="tests/helpers"
