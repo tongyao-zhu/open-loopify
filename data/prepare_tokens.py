@@ -188,6 +188,9 @@ if __name__ == "__main__":
         q.start()
     for q in procs:
         q.join()
+    failed = [f"{q.name} (exit {q.exitcode})" for q in procs if q.exitcode != 0]
+    if failed:
+        raise SystemExit("data preparation workers failed: " + ", ".join(failed))
 
     names = [s if sh is None else f"{s}_p{sh[0]}" for s, _, sh in jobs]
     manifest = {

@@ -367,4 +367,7 @@ def load_lr_scheduler(
 
     state_dict = torch.load(root_folder / lr_scheduler_filename(parallel_context, is_zero))
     lr_scheduler.load_state_dict(state_dict)
-    lr_scheduler._initial_step()  # NOTE: this is required to set the initial learning rate
+    # LambdaLR construction changed optimizer lr; restore the saved value without
+    # advancing last_epoch or resetting the scheduler step counter.
+    for group, lr in zip(lr_scheduler.optimizer.param_groups, lr_scheduler.get_last_lr()):
+        group["lr"] = lr

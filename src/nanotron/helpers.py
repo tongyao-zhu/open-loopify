@@ -116,7 +116,8 @@ def lr_scheduler_builder(optimizer: Optimizer, lr_scheduler_args: LRSchedulerArg
         """
         # No warmup or decay
         if lr_scheduler_args.lr_warmup_steps == 0 and lr_decay_steps == 0:
-            return initial_lr
+            # LambdaLR expects a multiplier, not an absolute learning rate.
+            return 1.0
 
         # Warmup phase
         elif lr_scheduler_args.lr_warmup_style is not None and current_step <= lr_scheduler_args.lr_warmup_steps:
@@ -167,7 +168,9 @@ def lr_scheduler_builder(optimizer: Optimizer, lr_scheduler_args: LRSchedulerArg
     # NOTE: get learning rate scheduler for each param group
     lr_lambdas = []
     for param_group in optimizer.get_base_optimizer().param_groups:
-        lr_lambdas.append(get_lr_lambda_for_param_group(lr=param_group["lr"]))
+        # An optimizer restored from a checkpoint already has a decayed `lr`.
+        # Rebuild its schedule from the original base rate, just as on first launch.
+        lr_lambdas.append(get_lr_lambda_for_param_group(lr=param_group.get("initial_lr", param_group["lr"])))
 
     assert len(lr_lambdas) == len(
         optimizer.get_base_optimizer().param_groups

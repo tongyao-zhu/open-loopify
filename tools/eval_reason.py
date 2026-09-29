@@ -106,13 +106,26 @@ def generate(args):
 
     partial = out / "generations.partial.jsonl"
     done = {}
+    repair_partial = False
     if partial.exists():
         for line in open(partial):
             try:
                 row = json.loads(line)
             except json.JSONDecodeError:  # the line being written when the process died
+                repair_partial = True
                 continue
             done[row["key"]] = row
+            repair_partial |= not line.endswith("\n")
+    if repair_partial:
+        # Appending directly to a torn tail would corrupt the next completed
+        # sample too. Persist all recovered records before accepting new ones.
+        repaired = partial.with_suffix(".jsonl.tmp")
+        with open(repaired, "w") as f:
+            for row in done.values():
+                f.write(json.dumps(row) + "\n")
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(repaired, partial)
     pending = [key for key in requests if key not in done]
     print(f"{len(done)} of {len(requests)} samples already generated, {len(pending)} to go", flush=True)
 

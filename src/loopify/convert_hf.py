@@ -68,7 +68,8 @@ def hf_config_to_kwargs(hf_config) -> dict:
         rope_interleaved=False,  # matches HF's rotate_half convention
         tie_word_embeddings=hf_config.tie_word_embeddings,
         vocab_size=hf_config.vocab_size,
-        attention_bias=getattr(hf_config, "attention_bias", False),
+        # HF Qwen2 always has Q/K/V biases; its config need not expose this flag.
+        attention_bias=True if model_type == "qwen2" else getattr(hf_config, "attention_bias", False),
         qk_norm=qk_norm,
         norm_placement=norm_placement,
         head_dim=head_dim,
