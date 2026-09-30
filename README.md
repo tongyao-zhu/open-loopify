@@ -39,17 +39,26 @@ Qwen3-4B-Base, layers [13, 22) looped 3×, mid-trained on 1.57B tokens of open r
 Given 28k tokens to think instead of 16k (`--max-tokens 28672` in [Evaluate](#-evaluate)) it reaches
 50.0 / 41.2 / 24.6 on AIME 2024 / AIME 2025 / HMMT.
 
-**Looped vs dense on the same data.** Both start from Qwen3-4B-Base and see the same tokens in
+**Qwen3-4B: looped vs dense on the same data.** Both start from Qwen3-4B-Base and see the same tokens in
 the same order; the only difference is the loop.
 
-![Looped vs dense accuracy against training tokens on AIME 2024, AIME 2025, MATH-500 and GPQA-Diamond](docs/loop_vs_dense_tokens.png)
+![Qwen3-4B looped and dense models, plus Qwen3-1.7B looped checkpoints, on AIME 2024, AIME 2025, MATH-500 and GPQA-Diamond](docs/loop_vs_dense_tokens.png)
 
-At equal training tokens the looped model is ahead almost everywhere (15 of 16 comparisons). At
+For Qwen3-4B, at equal training tokens the looped model is ahead almost everywhere (15 of 16 comparisons). At
 equal compute — the dense model trained 1.5× longer — the looped model still leads on competition
 math (AIME 2024/25 and HMMT Feb 2025: +3.6 points, 95% CI [+0.6, +6.8]; +6.5 [+2.5, +10.7] with
 28k tokens to think), ties on MATH-500 and trails on GPQA-Diamond.
 
-All models are scored the same way; see [Evaluate](#-evaluate).
+The gold series adds **Qwen3-1.7B looped**, trained on complete reasoning traces of at most 8k
+tokens. Only steps 2500 and 3000 were retained (1.31B and 1.57B training tokens); earlier points
+are unavailable. Its training mixture differs from the 4B runs, and it has no matched dense
+control. At step 3000 it scores **10.4 / 11.3 / 70.0 / 18.7** on the four benchmarks above.
+
+All plotted checkpoints use the same evaluation protocol: a 16k output limit, temperature 0.6,
+top-p 0.95, AIME mean accuracy over 8 samples per question, and one sample for MATH-500 and
+GPQA-Diamond; see [Evaluate](#-evaluate). These are single-training-seed results, with only 30
+questions per AIME year. Evaluation batch layouts differ between 4B and 1.7B, so identical
+per-token samples are not guaranteed.
 
 ## ⚙️ Install
 

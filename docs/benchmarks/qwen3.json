@@ -1,5 +1,5 @@
 {
-  "status": "verified_historical",
+  "status": "verified",
   "protocol": {
     "benchmarks": "aime24,aime25,math500,gpqa",
     "aime_samples": 8,
@@ -549,10 +549,110 @@
       "series": "qwen3_4b_dense",
       "step": 4500,
       "tokens_b": 2.359296
+    },
+    {
+      "benchmarks": {
+        "aime24": {
+          "accuracy": 10.416666666666666,
+          "correct": 25,
+          "samples": 240,
+          "questions": 30,
+          "samples_per_question": 8,
+          "median_tokens": 16384.0,
+          "truncated_pct": 65.41666666666667
+        },
+        "aime25": {
+          "accuracy": 12.916666666666666,
+          "correct": 31,
+          "samples": 240,
+          "questions": 30,
+          "samples_per_question": 8,
+          "median_tokens": 16384.0,
+          "truncated_pct": 54.583333333333336
+        },
+        "math500": {
+          "accuracy": 69.8,
+          "correct": 349,
+          "samples": 500,
+          "questions": 500,
+          "samples_per_question": 1,
+          "median_tokens": 4476.5,
+          "truncated_pct": 16.4
+        },
+        "gpqa": {
+          "accuracy": 18.181818181818183,
+          "correct": 36,
+          "samples": 198,
+          "questions": 198,
+          "samples_per_question": 1,
+          "median_tokens": 13237.5,
+          "truncated_pct": 45.45454545454545
+        }
+      },
+      "source_run": "step2500",
+      "source_hashes": {
+        "graded.jsonl": "20c58b24c4121b07a98f5ecc623d4bcbf5b70a388b5efc97a01c4cce04e06379",
+        "summary.json": "c6b56ec850ac66692f39a163eb8fcbab4dfaa0a00631fdd95bd56bffb8ee1ca5",
+        "generate_args.json": "ee13f2e6d62f955e35792ee1aac39a878b35ece573db826fd4ea11669b7f85d2"
+      },
+      "series": "qwen3_1p7b_loop_short8k",
+      "step": 2500,
+      "tokens_b": 1.31072
+    },
+    {
+      "benchmarks": {
+        "aime24": {
+          "accuracy": 10.416666666666666,
+          "correct": 25,
+          "samples": 240,
+          "questions": 30,
+          "samples_per_question": 8,
+          "median_tokens": 16384.0,
+          "truncated_pct": 62.5
+        },
+        "aime25": {
+          "accuracy": 11.25,
+          "correct": 27,
+          "samples": 240,
+          "questions": 30,
+          "samples_per_question": 8,
+          "median_tokens": 16384.0,
+          "truncated_pct": 52.916666666666664
+        },
+        "math500": {
+          "accuracy": 70.0,
+          "correct": 350,
+          "samples": 500,
+          "questions": 500,
+          "samples_per_question": 1,
+          "median_tokens": 4762.5,
+          "truncated_pct": 14.2
+        },
+        "gpqa": {
+          "accuracy": 18.68686868686869,
+          "correct": 37,
+          "samples": 198,
+          "questions": 198,
+          "samples_per_question": 1,
+          "median_tokens": 16384.0,
+          "truncated_pct": 50.505050505050505
+        }
+      },
+      "source_run": "step3000",
+      "source_hashes": {
+        "graded.jsonl": "6ace8d9d0b556dcac305d2eb8786c5613eca39c533843ed4a5a447bfe1033bfc",
+        "summary.json": "9673019f6c94b8bc7fa0f4f1d64bf38659351f8bda6ba39e429b263a265adc8b",
+        "generate_args.json": "22eb55a8063c7999fe65b001be07d996b3523bcc5129f996b0374badc95ebb5b"
+      },
+      "series": "qwen3_1p7b_loop_short8k",
+      "step": 3000,
+      "tokens_b": 1.572864
     }
   ],
   "limitations": [
-    "Single training seed. AIME has 30 questions per year, sampled 8 times each.",
-    "Panel-specific y-scales. 4B loop and dense use matched training data."
+    "1.7B uses a different short-trace training mixture; not a matched dense control.",
+    "1.7B checkpoints before step2500 were deleted before preservation was requested.",
+    "Single training seed; AIME averages 8 samples across only 30 questions per year.",
+    "Batch topology differs from historical 4B evaluation; bitwise sample identity is not claimed."
   ]
 }
