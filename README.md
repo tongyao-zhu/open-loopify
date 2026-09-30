@@ -1,8 +1,9 @@
 <p align="center">
-  <img alt="open-loopify: a capybara running in a wheel" src="docs/logo/capybara-wheel-v1.png" width="280">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/logo/open-loopify-logo-dark.svg">
+    <img alt="open-loopify: a capybara running in a wheel beside the project name" src="docs/logo/open-loopify-logo.svg" width="560">
+  </picture>
 </p>
-
-<h1 align="center">open-loopify</h1>
 
 <p align="center"><b>Make a pretrained model think deeper by running its own layers more than once — no new parameters.</b></p>
 

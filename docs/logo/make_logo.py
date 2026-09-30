@@ -1,4 +1,4 @@
-"""Draw the open-loopify logo: a hamster running in a wheel.
+"""Build the capybara README logo and the legacy hamster icon assets.
 
 The wheel is the looped span of layers -- the same wheel, run again and again -- and
 its rim is built from blocks. More laps is more computation per token; the wheel does
@@ -7,7 +7,9 @@ not get any bigger, which is the point.
     python3 make_logo.py      # writes the SVGs next to this file
 """
 
+import base64
 import math
+from pathlib import Path
 
 ORANGE, ORANGE2, TEAL, DARK, BG = "#C25A28", "#E48A4E", "#2E6F78", "#16212B", "#F7F6F2"
 FUR, FUR2, BELLY, PINK, PINK2, CHEEK = "#EBAA5C", "#D48A3C", "#FDEBD3", "#F29CA3", "#DE8088", "#F6A9AE"
@@ -126,16 +128,18 @@ def text_path(text, size, x, y, weight="bold"):
 
 
 def lockup(dark=False):
-    """Mark plus wordmark, for the top of the README."""
+    """Approved capybara plus the original outlined wordmark, for the README."""
     teal = "#7FC4CC" if dark else TEAL
     muted = "#AAB4BC" if dark else "#5A6570"
-    x0, base = 470, 236
+    x0, base = 330, 158
     d_open, w_open = text_path("open-", 132, x0, base)
     d_loop, w_loop = text_path("loopify", 132, x0 + w_open, base)
     d_tag, w_tag = text_path("looped language models, in the open", 40, x0 + 6, base + 76, weight="normal")
     width = int(x0 + max(w_open + w_loop, w_tag) + 40)
-    return f'''<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="440" viewBox="0 0 {width} 440">
-  <svg x="10" y="10" width="420" height="420" viewBox="0 0 512 512">{icon(background=False, teal=teal, bg="none", inner=True)}</svg>
+    image_data = base64.b64encode(Path(__file__).with_name("capybara-wheel-v1.png").read_bytes()).decode("ascii")
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="{width}" height="300" viewBox="0 0 {width} 300" role="img" aria-labelledby="logo-title">
+  <title id="logo-title">open-loopify: a capybara running in a wheel</title>
+  <image x="10" y="10" width="280" height="280" xlink:href="data:image/png;base64,{image_data}"/>
   <path d="{d_open}" fill="{teal}"/>
   <path d="{d_loop}" fill="{ORANGE if not dark else "#EE9A62"}"/>
   <path d="{d_tag}" fill="{muted}"/>
