@@ -119,28 +119,32 @@ The repeated passes share weights. This gives **54 block executions per token**
 (13 + 9 × 3 + 14), while keeping the original 36 sets of layer weights during training.
 Change `--loop` to explore a different span or repeat count.
 
-Convert the base checkpoint, generate a config, train, and export. Replace `data/my_tokens`
-with a folder of tokenized training data (`.ds` files and `info.json`), prepared with the
-same model's tokenizer. Data preparation and the published data recipe are in the expandable
-section below.
+Use the built-in [**reasoning-v1**](data/mixtures/reasoning-v1.json) data mixture from our
+Qwen3-4B experiments. Prepare it once with your model's tokenizer, then pass its output
+directory to the config generator. The mixture is selected by name; no manual data weights
+are needed.
 
 ```bash
 # 1. Convert the base checkpoint
 torchrun --nproc_per_node=1 -m loopify.convert_hf \
     --hf Qwen/Qwen3-4B-Base --out ckpts/qwen3-4b-base
 
-# 2. Choose the loop; generate looped and dense-control configs
+# 2. Prepare the built-in reasoning mixture
+python data/prepare_tokens.py --model Qwen/Qwen3-4B-Base \
+    --mixture reasoning-v1 --out data/reason
+
+# 3. Choose the loop; generate looped and dense-control configs
 python configs/make_config.py \
     --hf Qwen/Qwen3-4B-Base --ckpt ckpts/qwen3-4b-base \
     --loop 13:22:3 \
-    --data data/my_tokens \
+    --data data/reason \
     --train-steps 3000 --seq-len 16384 --recompute --zero1
 
-# 3. Train (8 GPUs)
+# 4. Train (8 GPUs)
 torchrun --nproc_per_node=8 run_loopify.py \
     --config-file configs/qwen3_4b_base_loop_s17_recompute_zero1.yaml
 
-# 4. Export as an ordinary Hugging Face checkpoint
+# 5. Export as an ordinary Hugging Face checkpoint
 torchrun --nproc_per_node=1 -m loopify.export_hf --unroll \
     --ckpt runs/qwen3_4b_base_loop_s17/checkpoints/3000 \
     --hf-ref Qwen/Qwen3-4B-Base --out hf/qwen3-4b-loop
@@ -150,43 +154,29 @@ torchrun --nproc_per_node=1 -m loopify.export_hf --unroll \
 54 layers for this example, loadable with standard Transformers or vLLM.
 
 <details>
-<summary>Data preparation and the published Qwen3-4B recipe</summary>
+<summary>What's in reasoning-v1? Can I use my own data?</summary>
 
-The main example accepts a single token folder without any sampling-weight syntax.
-For multiple folders, `--data DIR1 DIR2` samples in proportion to the token counts in their
-`info.json` files. An explicit `:WEIGHT` suffix is optional and overrides that default.
+The [versioned recipe](data/mixtures/reasoning-v1.json) combines:
 
-To use the data mixture behind the reported Qwen3-4B results, prepare the two sources below,
-then use the weighted config command in place of step 2 above:
+| Source | Sampling share | Length filter |
+|---|---|---|
+| [OpenThoughts3](https://huggingface.co/datasets/open-thoughts/OpenThoughts3-1.2M) | 2/3 | Drop traces of 15,000 tokens or more |
+| [OpenR1-Math](https://huggingface.co/datasets/open-r1/OpenR1-Math-220k) | 1/3 | Disabled for this recipe |
 
-```bash
-# Prepare up to 3.2B tokens, split across 8 output folders.
-# The default filter drops reasoning traces of 15,000 tokens or more.
-python data/prepare_tokens.py --model Qwen/Qwen3-4B-Base --out data/reason \
-    --sources openthoughts3=3200 --shards 8
+The preset prepares up to 3.2B and 600M tokens respectively, using the model's chat template
+and tokenizer. The token files need up to about 15.2 GB, in addition to the Hugging Face
+download cache. A completed preparation can be reused with the same tokenizer.
 
-# Prepare up to 600M tokens; this recipe disables the length filter for OpenR1.
-python data/prepare_tokens.py --model Qwen/Qwen3-4B-Base --out data/reason \
-    --sources openr1math=600 --max-doc-tokens 0
+The output directory contains a `manifest.json` with the mixture's sampling weights.
+`make_config.py --data data/reason` reads it automatically and checks that its shards are
+complete and the tokenizer matches `--hf`. The same mixture is used for looped and dense
+configs. Training duration is still controlled by `--train-steps`.
 
-# Sample OpenThoughts3 and OpenR1 at a 2:1 ratio.
-python configs/make_config.py --hf Qwen/Qwen3-4B-Base --ckpt ckpts/qwen3-4b-base \
-    --loop 13:22:3 \
-    --data "data/reason/openthoughts3_p*:175" data/reason/openr1math:700 \
-    --train-steps 3000 --seq-len 16384 --recompute --zero1
-```
-
-The two numeric suffixes have different meanings:
-
-| Syntax | Meaning |
-|---|---|
-| `--sources openr1math=600` | Preprocessing budget: up to **600 million tokens** from this source |
-| `--data data/reason/openr1math:700` | Training mixture: a **relative sampling weight** of 700 for this folder |
-| `"data/reason/openthoughts3_p*:175"` | A weight of 175 **per matching shard**; 8 shards give 8 × 175 = 1,400 |
-
-Thus the mixture weights are 1,400:700, or **2:1**. They do not specify the total training
-budget; `--train-steps` controls that. These are choices for this data recipe, independent
-of which layers you loop.
+For your own data, pass token folders made with the same tokenizer:
+`--data data/my_tokens`, or `--data data/source_a data/source_b`. Individual folders are
+sampled in proportion to their token counts; advanced users can override this with
+`DIR:WEIGHT`. Custom preprocessing remains available through `prepare_tokens.py --sources`
+(see `--help`).
 
 </details>
 
@@ -236,6 +226,7 @@ src/loopify/
   convert_hf.py    Hugging Face -> nanotron
   export_hf.py     nanotron -> Hugging Face, with --unroll for a plain checkpoint
 configs/make_config.py   looped + dense configs from one source
+data/mixtures/           built-in, versioned data recipes
 data/prepare_tokens.py   download, filter, tokenize and pack training data
 run_loopify.py           training entry point
 tools/                   equivalence checks and evaluation

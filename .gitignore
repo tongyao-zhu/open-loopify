@@ -177,5 +177,6 @@ runs/
 hf/
 results/
 data/*/
+!data/mixtures/
 configs/*.yaml
 wandb/

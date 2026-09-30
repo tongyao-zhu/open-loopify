@@ -4,7 +4,7 @@ Both come from one source, so the loop is the only difference between them: same
 same data in the same order, same seed, same schedule.
 
     python configs/make_config.py --hf Qwen/Qwen3-4B-Base --ckpt ckpts/qwen3-4b-base \\
-        --loop 13:22:3 --data "data/reason/openthoughts3_p*:175" data/reason/openr1math:700 \\
+        --loop 13:22:3 --data data/reason \\
         --train-steps 3000 --seq-len 16384 --recompute --zero1
 
 writes configs/qwen3_4b_base_loop_s17_recompute_zero1.yaml and the matching _dense_ config.
@@ -13,6 +13,7 @@ writes configs/qwen3_4b_base_loop_s17_recompute_zero1.yaml and the matching _den
 import argparse
 import glob
 import json
+import math
 import os
 import re
 from pathlib import Path
@@ -25,12 +26,46 @@ ARMS = {"loop": True, "dense": False}
 TOKENS_PER_STEP = 524_288
 
 
-def parse_data(specs):
+def mixture_data(folder, expected_tokenizer=None):
+    """Read a prepared mixture's relative shard paths and saved sampling weights."""
+    root = Path(folder)
+    manifest = json.loads((root / "manifest.json").read_text())
+    weights = manifest.get("sampling_weights")
+    sources = manifest.get("sources")
+    if not manifest.get("mixture") or not weights or not isinstance(weights, dict) or not isinstance(sources, dict):
+        raise ValueError(f"{folder} has no named mixture; pass its individual token folders with --data")
+    if set(weights) != set(sources):
+        raise ValueError(f"Incomplete mixture manifest in {folder}")
+    if expected_tokenizer is not None and manifest.get("tokenizer") != expected_tokenizer:
+        raise ValueError("Mixture tokenizer differs from --hf; prepare it with the same model/tokenizer")
+    folders, values = [], []
+    for name, weight in weights.items():
+        if not isinstance(name, str) or name in (".", "..") or Path(name).name != name:
+            raise ValueError(f"Invalid mixture shard name: {name}")
+        if not isinstance(weight, (int, float)) or not math.isfinite(weight) or weight <= 0:
+            raise ValueError(f"Invalid mixture sampling weight for {name}")
+        child = root / name
+        info_path = child / "info.json"
+        if not info_path.is_file():
+            raise ValueError(f"Incomplete mixture: missing {info_path}")
+        info = json.loads(info_path.read_text())
+        data = child / f"{name}.ds"
+        tokens = info.get("tokens", 0)
+        if (info != sources[name] or info.get("tokenizer") != manifest.get("tokenizer")
+                or tokens <= 0 or not data.is_file() or data.stat().st_size != tokens * 4):
+            raise ValueError(f"Incomplete or changed mixture shard: {child}")
+        folders.append(str(child))
+        values.append(weight)
+    return folders, values
+
+
+def parse_data(specs, expected_tokenizer=None):
     """--data DIR[:WEIGHT] ... -> (folders, weights).
 
     A DIR may be a glob (quote it), so the shards written by prepare_tokens.py --shards
     come in one argument. Without a weight, a folder is sampled in proportion to the
-    tokens it holds, as recorded in its info.json.
+    tokens it holds, as recorded in its info.json. A prepared named mixture's root
+    directory expands to its shards using the weights in manifest.json.
     """
     folders, weights = [], []
     for spec in specs:
@@ -40,9 +75,16 @@ def parse_data(specs):
             path, weight = head, float(tail)
         for folder in sorted(glob.glob(path)) or [path]:
             folder = os.path.abspath(folder)
+            if os.path.isfile(os.path.join(folder, "manifest.json")):
+                if weight is not None:
+                    raise ValueError("A named mixture supplies its own weights; omit :WEIGHT on its root directory")
+                mixture_folders, mixture_weights = mixture_data(folder, expected_tokenizer)
+                folders.extend(mixture_folders)
+                weights.extend(mixture_weights)
+                continue
             if weight is None:
                 info = os.path.join(folder, "info.json")
-                w = json.load(open(info))["tokens"] if os.path.exists(info) else 1
+                w = json.loads(Path(info).read_text())["tokens"] if os.path.exists(info) else 1
             else:
                 w = weight
             folders.append(folder)
@@ -167,7 +209,8 @@ if __name__ == "__main__":
     parser.add_argument("--ckpt", required=True, help="the nanotron checkpoint loopify.convert_hf wrote for --hf")
     parser.add_argument("--loop", required=True, help="START:END:K -- decoder layers [START, END) run K times")
     parser.add_argument("--data", required=True, nargs="+", metavar="DIR[:WEIGHT]",
-                        help="token folders from data/prepare_tokens.py; a DIR may be a quoted glob; "
+                        help="a prepared mixture directory or token folders from data/prepare_tokens.py; "
+                        "a DIR may be a quoted glob; "
                         "unweighted folders are sampled in proportion to their tokens")
     parser.add_argument("--arms", nargs="+", default=list(ARMS), choices=list(ARMS))
     parser.add_argument("--train-steps", type=int, required=True, help=f"steps of {TOKENS_PER_STEP:,} tokens")
@@ -185,13 +228,17 @@ if __name__ == "__main__":
     parser.add_argument("--out-dir", type=Path, default=Path("configs"))
     args = parser.parse_args()
 
+    try:
+        folders, weights = parse_data(args.data, expected_tokenizer=args.hf)
+    except ValueError as exc:
+        parser.error(str(exc))
+
     from transformers import AutoConfig
 
     from loopify.convert_hf import hf_config_to_kwargs
 
     args.name = args.name or model_name(args.hf)
     architecture = hf_config_to_kwargs(AutoConfig.from_pretrained(args.hf))
-    folders, weights = parse_data(args.data)
     args.out_dir.mkdir(parents=True, exist_ok=True)
     suffix = ("_recompute" if args.recompute else "") + ("_zero1" if args.zero1 else "") + (
         f"_tp{args.tp}" if args.tp > 1 else ""

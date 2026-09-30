@@ -1,0 +1,20 @@
+{
+  "name": "reasoning-v1",
+  "description": "OpenThoughts3 and OpenR1-Math at a 2:1 sampling ratio, as used for the Qwen3-4B results.",
+  "sources": [
+    {
+      "source": "openthoughts3",
+      "budget_tokens": 3200000000,
+      "shards": 8,
+      "sampling_weight": 2,
+      "max_doc_tokens": 15000
+    },
+    {
+      "source": "openr1math",
+      "budget_tokens": 600000000,
+      "shards": 1,
+      "sampling_weight": 1,
+      "max_doc_tokens": 0
+    }
+  ]
+}
