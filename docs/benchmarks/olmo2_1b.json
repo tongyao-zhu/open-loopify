@@ -1,0 +1,149 @@
+{
+  "status": "verified",
+  "model": "OLMo-2-0425-1B",
+  "loop": [
+    7,
+    11,
+    3
+  ],
+  "seed": 23,
+  "protocol": {
+    "dataset": "GSM8K",
+    "split": "test",
+    "questions": 1319,
+    "fewshot": 8,
+    "prompt_format": "plain",
+    "decoding": "greedy",
+    "max_new_tokens": 512,
+    "batch_size": 16
+  },
+  "baseline": {
+    "n": 1319,
+    "correct": 45,
+    "accuracy": 0.03411675511751327,
+    "tokens_median": 53,
+    "tokens_p90_nearest_rank": 512,
+    "truncated": 143,
+    "truncation_rate": 0.10841546626231995,
+    "hashes": {
+      "summary.json": "ee2041693c6ce6f1e9c11b39b54e1318554ca22738c6d0f7ff762a3150f1f20f",
+      "metadata.json": "9916511d131be617879d71f52e451f086a6ec924f3c95befd19be031ae92a598",
+      "predictions.jsonl": "2ae5cab1388f579037cc45be1fcf8f82a8716b997b6bcc0af2b937fbffb729c0"
+    }
+  },
+  "baseline_label": "Original stage1 dense model (reference, not loop step 0)",
+  "points": [
+    {
+      "step": 1000,
+      "training_tokens": 524288000,
+      "n": 1319,
+      "correct": 146,
+      "accuracy": 0.1106899166034875,
+      "tokens_median": 58,
+      "tokens_p90_nearest_rank": 111,
+      "truncated": 56,
+      "truncation_rate": 0.04245640636846096,
+      "accuracy_ci95_wilson": [
+        0.09487510361976415,
+        0.12876588257238464
+      ],
+      "hashes": {
+        "summary.json": "8bce28f6044d692a9208ede3ec56460881e7b83d51fea59c569b417e8f401e92",
+        "metadata.json": "ce87006146fadb758f20d7ea07acf1c9a0555b5adbad605a96b069d2c8cca59d",
+        "predictions.jsonl": "2598b08edc3711c1716251c2bdbaebc7b708d275bc92b2bc3461973c864ed188"
+      }
+    },
+    {
+      "step": 1500,
+      "training_tokens": 786432000,
+      "n": 1319,
+      "correct": 172,
+      "accuracy": 0.13040181956027294,
+      "tokens_median": 60,
+      "tokens_p90_nearest_rank": 111,
+      "truncated": 58,
+      "truncation_rate": 0.04397270659590599,
+      "accuracy_ci95_wilson": [
+        0.11329650222731896,
+        0.14965380111965776
+      ],
+      "hashes": {
+        "summary.json": "8471862931c3c5337ef3a531a90fd6782bffde6350baa26b0d3f3528c2d6f1dd",
+        "metadata.json": "064800856d94386d76b56c41b12032b2afd8e93999f77e2f73419f428c055ea4",
+        "predictions.jsonl": "7723aa358068b46172457716dce5acec8db7208bed113cbe4e2641329a63b36c"
+      }
+    },
+    {
+      "step": 2000,
+      "training_tokens": 1048576000,
+      "n": 1319,
+      "correct": 229,
+      "accuracy": 0.17361637604245642,
+      "tokens_median": 63,
+      "tokens_p90_nearest_rank": 115,
+      "truncated": 54,
+      "truncation_rate": 0.04094010614101592,
+      "accuracy_ci95_wilson": [
+        0.15413008554957047,
+        0.19499833617529816
+      ],
+      "hashes": {
+        "summary.json": "5560f18b2ad088f20a4d942f596d3245b186b71c24f35f060083d91fb938c7b7",
+        "metadata.json": "3dd69376a4ae537815d8ca8ce42bfac04aa171a4bead849f7895912fcae177ce",
+        "predictions.jsonl": "93fcd06073641b78a4de46c7cd43b7743b0f8b06bf5b62e041b1a68778b29c1d"
+      }
+    },
+    {
+      "step": 2500,
+      "training_tokens": 1310720000,
+      "n": 1319,
+      "correct": 240,
+      "accuracy": 0.1819560272934041,
+      "tokens_median": 62,
+      "tokens_p90_nearest_rank": 116,
+      "truncated": 49,
+      "truncation_rate": 0.037149355572403335,
+      "accuracy_ci95_wilson": [
+        0.16206821857626325,
+        0.2036910680987249
+      ],
+      "hashes": {
+        "summary.json": "5df49b23b4815a95175078646d667717f781a5791c6c9b037406382139fc010a",
+        "metadata.json": "bc9d3f7b8dba1e313e6dfa66f2dae71d7bbc1d2318ee1e9b6b17540168716aeb",
+        "predictions.jsonl": "9336e6bc25757b0d8a9aa74ccabce3cdd1b08f42f346c273b0a4db9e9af12853"
+      }
+    },
+    {
+      "step": 3000,
+      "training_tokens": 1572864000,
+      "n": 1319,
+      "correct": 226,
+      "accuracy": 0.17134192570128887,
+      "tokens_median": 63,
+      "tokens_p90_nearest_rank": 116,
+      "truncated": 59,
+      "truncation_rate": 0.04473085670962851,
+      "accuracy_ci95_wilson": [
+        0.15196807470106405,
+        0.19262465658286293
+      ],
+      "hashes": {
+        "summary.json": "a8433f9ef37908d7e04023715236b99c2a2a3d94b1acf69a1fd7a0c0180ab8c5",
+        "metadata.json": "1ee314133588f8b3a9c12c8bd72836bfd37db56dda27b49f438d4393bf9a90f9",
+        "predictions.jsonl": "af8a81cdbd7162e0624a6ed8f4e4f12ab33e970969c0542c345f69f830edd54c"
+      }
+    }
+  ],
+  "missing_checkpoint_steps": [
+    500
+  ],
+  "limitations": [
+    "Single training seed; no matched 3000-step dense uptraining control.",
+    "Step 500 was pruned before preservation was requested; do not fabricate this point.",
+    "Wilson intervals quantify finite benchmark uncertainty, not training-seed variability."
+  ],
+  "benchmark_items_sha256": "e2e82e00abcb015749534661bfab8544981c1f968d1953232666ecb0f6bb3482",
+  "source_commit": "956455bcceedf7374f5b917f8668d610ed4fef0b",
+  "base_model_revision": "35050a46c747b7bfd279bc333e0b4504b5b18d8b",
+  "tokens_per_training_step": 524288
+}

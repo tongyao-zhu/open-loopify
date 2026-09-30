@@ -51,6 +51,23 @@ math (AIME 2024/25 and HMMT Feb 2025: +3.6 points, 95% CI [+0.6, +6.8]; +6.5 [+2
 
 All models are scored the same way; see [Evaluate](#-evaluate).
 
+### OLMo-2-1B: checkpoint performance
+
+We also loop layers [7, 11) three times in OLMo-2-1B and train for 3,000 steps
+(1.57B tokens). Five retained checkpoints are evaluated on the same 1,319 GSM8K test
+questions: 8-shot plain prompts, greedy decoding, a 512-token output limit, and batch size 16.
+
+<p align="center">
+  <img src="docs/olmo2_1b_gsm8k.png" width="680" alt="OLMo-2-1B GSM8K accuracy at steps 1000, 1500, 2000, 2500 and 3000, with the original stage-1 base as a separate reference">
+</p>
+
+Accuracy reaches 18.20% at step 2500 and 17.13% at step 3000, versus 3.41% for the original
+stage-1 base. This is one training seed with **no matched dense-training control**; it does
+not isolate the effect of looping from continued training. Error bars are 95% Wilson
+intervals over test questions, not training-seed variability. The 500-step checkpoint was
+pruned before retention was requested. The base is a reference, not loop step 0; this GSM8K
+protocol differs from the Qwen reasoning benchmarks above.
+
 ## ⚙️ Install
 
 Needs Linux, an NVIDIA driver for CUDA 12 (≥ 525), and `g++`/`make` (the data loader compiles a
