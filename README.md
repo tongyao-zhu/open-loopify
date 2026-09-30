@@ -169,11 +169,10 @@ docs/logo/               project logo assets
 
 ## 📚 Related work
 
-We generally follow the approach from [ETD](https://arxiv.org/abs/2510.07358)
-(Encode-Think-Decode), applying recurrence to a subset of layers in a pretrained model during
-mid-training. Related work includes [Huginn](https://github.com/seal-rg/recurrent-pretraining),
-[Ouro](https://ouro-llm.github.io/),
-[Retrofitted Recurrence](https://arxiv.org/abs/2511.07384),
+We generally follow the approach from [Retrofitted Recurrence](https://arxiv.org/abs/2511.07384),
+applying recurrence to a subset of layers in a pretrained model during mid-training.
+Related work includes [ETD](https://arxiv.org/abs/2510.07358) (Encode-Think-Decode),
+[Huginn](https://github.com/seal-rg/recurrent-pretraining), [Ouro](https://ouro-llm.github.io/),
 [Relaxed Recursive Transformers](https://arxiv.org/abs/2410.20672), and
 [Loopie](https://arxiv.org/abs/2607.16051).
 
