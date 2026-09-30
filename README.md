@@ -95,47 +95,122 @@ Or serve it: `vllm serve tyzhu/open-loopify-Qwen3-4B`. Give it room to think —
 
 ## 🔁 Loop your own model
 
-The recipe above, in five steps:
+**Choose which layers to repeat, and how many times to run them:**
 
 ```bash
-# 1. convert the checkpoint to nanotron
-torchrun --nproc_per_node=1 -m loopify.convert_hf --hf Qwen/Qwen3-4B-Base --out ckpts/qwen3-4b-base
+--loop 13:22:3
+```
 
-# 2. download, filter and tokenize the data
-python data/prepare_tokens.py --model Qwen/Qwen3-4B-Base --out data/reason \
-    --sources openthoughts3=3200 --shards 8          # drops traces >= 15k tokens
-python data/prepare_tokens.py --model Qwen/Qwen3-4B-Base --out data/reason \
-    --sources openr1math=600 --max-doc-tokens 0      # already clean
+The format is `START:END:K`, with **zero-based layer indices**:
 
-# 3. write the configs: the looped model and a dense control on the same data
-python configs/make_config.py --hf Qwen/Qwen3-4B-Base --ckpt ckpts/qwen3-4b-base \
-    --loop 13:22:3 --data "data/reason/openthoughts3_p*:175" data/reason/openr1math:700 \
+| Parameter | Example | Meaning |
+|---|---|---|
+| `START` | `13` | First layer in the repeated span, included |
+| `END` | `22` | End of the span, excluded |
+| `K` | `3` | Total passes through that span |
+
+For the 36-layer Qwen3-4B model, this runs layers 13–21 three times:
+
+```text
+layers 0–12 → [layers 13–21] × 3 → layers 22–35
+```
+
+The repeated passes share weights. This gives **54 block executions per token**
+(13 + 9 × 3 + 14), while keeping the original 36 sets of layer weights during training.
+Change `--loop` to explore a different span or repeat count.
+
+Convert the base checkpoint, generate a config, train, and export. Replace `data/my_tokens`
+with a folder of tokenized training data (`.ds` files and `info.json`), prepared with the
+same model's tokenizer. Data preparation and the published data recipe are in the expandable
+section below.
+
+```bash
+# 1. Convert the base checkpoint
+torchrun --nproc_per_node=1 -m loopify.convert_hf \
+    --hf Qwen/Qwen3-4B-Base --out ckpts/qwen3-4b-base
+
+# 2. Choose the loop; generate looped and dense-control configs
+python configs/make_config.py \
+    --hf Qwen/Qwen3-4B-Base --ckpt ckpts/qwen3-4b-base \
+    --loop 13:22:3 \
+    --data data/my_tokens \
     --train-steps 3000 --seq-len 16384 --recompute --zero1
 
-# 4. train (8 GPUs)
+# 3. Train (8 GPUs)
 torchrun --nproc_per_node=8 run_loopify.py \
     --config-file configs/qwen3_4b_base_loop_s17_recompute_zero1.yaml
 
-# 5. export as a plain 54-layer checkpoint
+# 4. Export as an ordinary Hugging Face checkpoint
 torchrun --nproc_per_node=1 -m loopify.export_hf --unroll \
     --ckpt runs/qwen3_4b_base_loop_s17/checkpoints/3000 \
     --hf-ref Qwen/Qwen3-4B-Base --out hf/qwen3-4b-loop
 ```
 
-`--loop 13:22:3` means layers 13 to 21 run 3 times. To match the dense control's compute as
-well as its data, train it longer by the ratio of blocks per token that `make_config.py` prints —
-here 54 / 36 = 1.5, so `--arms dense --train-steps 4500 --tag compute` (the tag gives it its own
-run directory, so it does not resume the 3000-step dense run).
+`--unroll` writes each repeated pass as a separate layer in the exported checkpoint:
+54 layers for this example, loadable with standard Transformers or vLLM.
+
+<details>
+<summary>Data preparation and the published Qwen3-4B recipe</summary>
+
+The main example accepts a single token folder without any sampling-weight syntax.
+For multiple folders, `--data DIR1 DIR2` samples in proportion to the token counts in their
+`info.json` files. An explicit `:WEIGHT` suffix is optional and overrides that default.
+
+To use the data mixture behind the reported Qwen3-4B results, prepare the two sources below,
+then use the weighted config command in place of step 2 above:
+
+```bash
+# Prepare up to 3.2B tokens, split across 8 output folders.
+# The default filter drops reasoning traces of 15,000 tokens or more.
+python data/prepare_tokens.py --model Qwen/Qwen3-4B-Base --out data/reason \
+    --sources openthoughts3=3200 --shards 8
+
+# Prepare up to 600M tokens; this recipe disables the length filter for OpenR1.
+python data/prepare_tokens.py --model Qwen/Qwen3-4B-Base --out data/reason \
+    --sources openr1math=600 --max-doc-tokens 0
+
+# Sample OpenThoughts3 and OpenR1 at a 2:1 ratio.
+python configs/make_config.py --hf Qwen/Qwen3-4B-Base --ckpt ckpts/qwen3-4b-base \
+    --loop 13:22:3 \
+    --data "data/reason/openthoughts3_p*:175" data/reason/openr1math:700 \
+    --train-steps 3000 --seq-len 16384 --recompute --zero1
+```
+
+The two numeric suffixes have different meanings:
+
+| Syntax | Meaning |
+|---|---|
+| `--sources openr1math=600` | Preprocessing budget: up to **600 million tokens** from this source |
+| `--data data/reason/openr1math:700` | Training mixture: a **relative sampling weight** of 700 for this folder |
+| `"data/reason/openthoughts3_p*:175"` | A weight of 175 **per matching shard**; 8 shards give 8 × 175 = 1,400 |
+
+Thus the mixture weights are 1,400:700, or **2:1**. They do not specify the total training
+budget; `--train-steps` controls that. These are choices for this data recipe, independent
+of which layers you loop.
+
+</details>
+
+<details>
+<summary>Dense controls and equivalence checks</summary>
+
+`make_config.py` also writes a dense-control config using the same model, data, seed, and
+training schedule. To match the looped model's compute as well as its data mixture, train the
+dense model longer by the block-execution ratio — here 54 / 36 = 1.5. Add
+`--arms dense --train-steps 4500 --tag compute` to the config command, replacing its
+`--train-steps 3000`. The tag gives this run its own directory.
 
 Two checks worth running once per model:
 
 ```bash
-# with no loop, the converted model must reproduce the original
+# With no loop, the converted model must reproduce the original.
 torchrun --nproc_per_node=1 tools/check_equivalence.py --hf Qwen/Qwen3-4B-Base
-# the unrolled export must reproduce the looped model
+
+# The unrolled export must reproduce the looped model.
 torchrun --nproc_per_node=1 tools/check_unroll.py --hf Qwen/Qwen3-4B-Base \
     --loop-start 13 --loop-end 22 --loop-k 3
 ```
+
+</details>
 
 ## 🧪 Evaluate
 
