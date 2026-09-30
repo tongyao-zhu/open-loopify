@@ -248,3 +248,9 @@ Related work includes [ETD](https://arxiv.org/abs/2510.07358) (Encode-Think-Deco
 ## License
 
 Apache-2.0, like nanotron. Training data (OpenThoughts3-1.2M, OpenR1-Math-220k) is Apache-2.0.
+
+## 📝 TODO
+
+- [ ] Add more model families and sizes.
+- [ ] Explore different layer-looping strategies.
+- [ ] Combine LoRA fine-tuning with layer looping.
