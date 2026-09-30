@@ -1,9 +1,8 @@
 <p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/logo/open-loopify-logo-dark.svg">
-    <img alt="open-loopify: looped language models, in the open" src="docs/logo/open-loopify-logo.svg" width="600">
-  </picture>
+  <img alt="open-loopify: a capybara running in a wheel" src="docs/logo/capybara-wheel-v1.png" width="280">
 </p>
+
+<h1 align="center">open-loopify</h1>
 
 <p align="center"><b>Make a pretrained model think deeper by running its own layers more than once — no new parameters.</b></p>
 
@@ -11,7 +10,7 @@ open-loopify loops a span of a released model's layers — for Qwen3-4B, layers 
 times, 54 blocks of compute per token instead of 36 — mid-trains it on open reasoning data, and
 exports an ordinary checkpoint that `transformers` and vLLM load with no custom code.
 
-**Weights:** [tyzhu/open-loopify-Qwen3-4B](https://huggingface.co/tyzhu/open-loopify-Qwen3-4B) on the Hugging Face Hub.
+**🤗 Weights:** [tyzhu/open-loopify-Qwen3-4B](https://huggingface.co/tyzhu/open-loopify-Qwen3-4B) on the Hugging Face Hub.
 
 ## ✨ Highlights
 
@@ -165,14 +164,18 @@ data/prepare_tokens.py   download, filter, tokenize and pack training data
 run_loopify.py           training entry point
 tools/                   equivalence checks and evaluation
 docs/nanotron-changes.md what this fork changes in nanotron
-docs/logo/               the logo, drawn by make_logo.py
+docs/logo/               project logo assets
 ```
 
 ## 📚 Related work
 
-Closest to this project: McLeish et al., [*Teaching Pretrained Language Models to Think Deeper
-with Retrofitted Recurrence*](https://arxiv.org/abs/2511.07384). Also: Huginn (depth recurrence
-from scratch), Ouro, ETD, Relaxed Recursive Transformers, Loopie.
+We generally follow the approach from [ETD](https://arxiv.org/abs/2510.07358)
+(Encode-Think-Decode), applying recurrence to a subset of layers in a pretrained model during
+mid-training. Related work includes [Huginn](https://github.com/seal-rg/recurrent-pretraining),
+[Ouro](https://ouro-llm.github.io/),
+[Retrofitted Recurrence](https://arxiv.org/abs/2511.07384),
+[Relaxed Recursive Transformers](https://arxiv.org/abs/2410.20672), and
+[Loopie](https://arxiv.org/abs/2607.16051).
 
 ## License
 
