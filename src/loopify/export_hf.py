@@ -13,17 +13,18 @@ them; loop_config.json records the span and count either way.
 import json
 from argparse import ArgumentParser
 from pathlib import Path
-from typing import Dict
+from typing import TYPE_CHECKING, Dict
 
 import nanotron
 import torch
 from transformers import AutoConfig, AutoModelForCausalLM, AutoTokenizer, GenerationConfig
+from transformers.utils import cached_file
 
-from loopify.config import LoopifyConfig
-from loopify.convert_hf import build_nanotron_model
+if TYPE_CHECKING:
+    from loopify.config import LoopifyConfig
 
 
-def nanotron_to_hf_weights(nt_sd: Dict[str, torch.Tensor], config: LoopifyConfig) -> Dict[str, torch.Tensor]:
+def nanotron_to_hf_weights(nt_sd: Dict[str, torch.Tensor], config: "LoopifyConfig") -> Dict[str, torch.Tensor]:
     head_dim = config.head_dim or config.hidden_size // config.num_attention_heads
     q_size = config.num_attention_heads * head_dim
     kv_size = config.num_key_value_heads * head_dim
@@ -67,7 +68,7 @@ def nanotron_to_hf_weights(nt_sd: Dict[str, torch.Tensor], config: LoopifyConfig
     return out
 
 
-def unroll(hf_sd: Dict[str, torch.Tensor], config: LoopifyConfig) -> Dict[str, torch.Tensor]:
+def unroll(hf_sd: Dict[str, torch.Tensor], config: "LoopifyConfig") -> Dict[str, torch.Tensor]:
     """Rewrite a looped model as a plain stack of its executed blocks.
 
     Running decoder[7:11] three times is the same computation as a deeper model
@@ -86,7 +87,33 @@ def unroll(hf_sd: Dict[str, torch.Tensor], config: LoopifyConfig) -> Dict[str, t
     return out
 
 
+def export_generation_config(hf_ref, hf_config, tokenizer):
+    """Keep native generation defaults outside the existing Qwen chat policy."""
+    if hf_config.model_type not in {"qwen2", "qwen3"}:
+        # Only a missing generation config falls back. Invalid files and access
+        # errors must stay visible rather than silently changing generation.
+        config_path = cached_file(
+            hf_ref, "generation_config.json", _raise_exceptions_for_missing_entries=False
+        )
+        if config_path is None:
+            return GenerationConfig.from_model_config(hf_config)
+        return GenerationConfig.from_pretrained(hf_ref)
+
+    # Preserve the existing Qwen turn-end and sampling behavior.
+    eos = hf_config.eos_token_id
+    eos = list(eos) if isinstance(eos, (list, tuple)) else [eos]
+    im_end = tokenizer.convert_tokens_to_ids("<|im_end|>")
+    if isinstance(im_end, int) and im_end != tokenizer.unk_token_id and im_end not in eos:
+        eos = [im_end] + eos
+    return GenerationConfig(
+        bos_token_id=hf_config.bos_token_id, eos_token_id=eos, do_sample=True, temperature=0.6, top_p=0.95
+    )
+
+
 def main():
+    from loopify.config import LoopifyConfig
+    from loopify.convert_hf import build_nanotron_model
+
     parser = ArgumentParser()
     parser.add_argument("--ckpt", type=Path, required=True, help="nanotron checkpoint dir (contains model/)")
     parser.add_argument("--hf-ref", type=str, required=True, help="original HF model, for config + tokenizer")
@@ -127,17 +154,8 @@ def main():
     assert all("lm_head" in m for m in missing), f"missing keys: {missing}"
     hf_model.tie_weights()
 
-    # A base model's generation config stops only at end-of-text; a chat-trained one must also stop
-    # at the end of its turn. Sample the way the models are evaluated.
     tok = AutoTokenizer.from_pretrained(args.hf_ref)
-    eos = hf_config.eos_token_id
-    eos = list(eos) if isinstance(eos, (list, tuple)) else [eos]
-    im_end = tok.convert_tokens_to_ids("<|im_end|>")
-    if isinstance(im_end, int) and im_end != tok.unk_token_id and im_end not in eos:
-        eos = [im_end] + eos
-    hf_model.generation_config = GenerationConfig(
-        bos_token_id=hf_config.bos_token_id, eos_token_id=eos, do_sample=True, temperature=0.6, top_p=0.95
-    )
+    hf_model.generation_config = export_generation_config(args.hf_ref, hf_config, tok)
 
     (args.out / "full_model").mkdir(parents=True, exist_ok=True)
     hf_model.save_pretrained(args.out / "full_model")
