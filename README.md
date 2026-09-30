@@ -44,6 +44,8 @@ the same order; the only difference is the loop.
 
 ![Looped vs dense accuracy against training tokens on AIME 2024, AIME 2025, MATH-500 and GPQA-Diamond](docs/loop_vs_dense_tokens.png)
 
+[Vector figure](docs/loop_vs_dense_tokens.svg) · [Plot data](docs/benchmarks/qwen3.json)
+
 At equal training tokens the looped model is ahead almost everywhere (15 of 16 comparisons). At
 equal compute — the dense model trained 1.5× longer — the looped model still leads on competition
 math (AIME 2024/25 and HMMT Feb 2025: +3.6 points, 95% CI [+0.6, +6.8]; +6.5 [+2.5, +10.7] with

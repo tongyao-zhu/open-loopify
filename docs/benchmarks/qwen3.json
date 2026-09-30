@@ -1,0 +1,558 @@
+{
+  "status": "verified_historical",
+  "protocol": {
+    "benchmarks": "aime24,aime25,math500,gpqa",
+    "aime_samples": 8,
+    "max_tokens": 16384,
+    "temperature": 0.6,
+    "top_p": 0.95
+  },
+  "benchmark_items_sha256": "e21c6140501b7deba4e6de58d1843ec1ac9a0f7cfb1d102aac791e33fc6c723b",
+  "question_count": 758,
+  "samples_per_checkpoint": 1178,
+  "points": [
+    {
+      "benchmarks": {
+        "aime24": {
+          "accuracy": 9.583333333333334,
+          "correct": 23,
+          "samples": 240,
+          "questions": 30,
+          "samples_per_question": 8,
+          "median_tokens": 889.5,
+          "truncated_pct": 7.5
+        },
+        "aime25": {
+          "accuracy": 5.0,
+          "correct": 12,
+          "samples": 240,
+          "questions": 30,
+          "samples_per_question": 8,
+          "median_tokens": 879.0,
+          "truncated_pct": 7.916666666666667
+        },
+        "math500": {
+          "accuracy": 68.6,
+          "correct": 343,
+          "samples": 500,
+          "questions": 500,
+          "samples_per_question": 1,
+          "median_tokens": 450.5,
+          "truncated_pct": 4.0
+        },
+        "gpqa": {
+          "accuracy": 33.83838383838384,
+          "correct": 67,
+          "samples": 198,
+          "questions": 198,
+          "samples_per_question": 1,
+          "median_tokens": 586.5,
+          "truncated_pct": 5.05050505050505
+        }
+      },
+      "source_run": "qwen3_4b_base_indep",
+      "source_hashes": {
+        "graded.jsonl": "38df01db0cc13b2ad4b2e375439cd8f8e8c040837b15252369b778c9dfdb7a62",
+        "summary.json": "7e255b43c1c91250d0da3c92244d768de6b8e3368a7696e2171b4d504c786ac3",
+        "generate_args.json": "3c5254b3fbe1799dff0ec62dcd643aa49708b99d6b032163637cd08e202d436f"
+      },
+      "series": "qwen3_4b_base",
+      "step": 0,
+      "tokens_b": 0.0
+    },
+    {
+      "benchmarks": {
+        "aime24": {
+          "accuracy": 27.916666666666668,
+          "correct": 67,
+          "samples": 240,
+          "questions": 30,
+          "samples_per_question": 8,
+          "median_tokens": 16384.0,
+          "truncated_pct": 65.83333333333333
+        },
+        "aime25": {
+          "accuracy": 29.166666666666668,
+          "correct": 70,
+          "samples": 240,
+          "questions": 30,
+          "samples_per_question": 8,
+          "median_tokens": 16384.0,
+          "truncated_pct": 57.083333333333336
+        },
+        "math500": {
+          "accuracy": 85.6,
+          "correct": 428,
+          "samples": 500,
+          "questions": 500,
+          "samples_per_question": 1,
+          "median_tokens": 3817.0,
+          "truncated_pct": 11.4
+        },
+        "gpqa": {
+          "accuracy": 32.82828282828283,
+          "correct": 65,
+          "samples": 198,
+          "questions": 198,
+          "samples_per_question": 1,
+          "median_tokens": 14037.5,
+          "truncated_pct": 45.95959595959596
+        }
+      },
+      "source_run": "qwen3_4b_reason_v2_etd_s17_step750_indep",
+      "source_hashes": {
+        "graded.jsonl": "47e0ea8bf2c2b7cf1cbcf8113d01453aa659d029ed6643aa426906877ebb5b6e",
+        "summary.json": "86ea4d319fb9f834fbd81a71c498d766961cc94a8a412a9f5ce136751c9aa13f",
+        "generate_args.json": "a15e6073b85443f8b83a815fe64bc687214ecdd9176a2b5ae71ffda75ca79d0c"
+      },
+      "series": "qwen3_4b_loop",
+      "step": 750,
+      "tokens_b": 0.393216
+    },
+    {
+      "benchmarks": {
+        "aime24": {
+          "accuracy": 35.416666666666664,
+          "correct": 85,
+          "samples": 240,
+          "questions": 30,
+          "samples_per_question": 8,
+          "median_tokens": 16384.0,
+          "truncated_pct": 60.0
+        },
+        "aime25": {
+          "accuracy": 30.0,
+          "correct": 72,
+          "samples": 240,
+          "questions": 30,
+          "samples_per_question": 8,
+          "median_tokens": 16384.0,
+          "truncated_pct": 64.16666666666667
+        },
+        "math500": {
+          "accuracy": 83.8,
+          "correct": 419,
+          "samples": 500,
+          "questions": 500,
+          "samples_per_question": 1,
+          "median_tokens": 3466.5,
+          "truncated_pct": 12.8
+        },
+        "gpqa": {
+          "accuracy": 29.292929292929294,
+          "correct": 58,
+          "samples": 198,
+          "questions": 198,
+          "samples_per_question": 1,
+          "median_tokens": 15586.0,
+          "truncated_pct": 48.484848484848484
+        }
+      },
+      "source_run": "qwen3_4b_reason_v2_etd_s17_step1500_indep",
+      "source_hashes": {
+        "graded.jsonl": "8fbd92dc6aa792af126108addf99c0278f8001fdb546410bfa8b044b492c70d3",
+        "summary.json": "f7a04e0afbab06f62b36cc38de16357463f4d0a3d62b75ccd5e9dbdb9dbb5c8f",
+        "generate_args.json": "61fbae5ec9030b31858bdddd9746f42dbbf626d0082e95999c7d3c11861033d2"
+      },
+      "series": "qwen3_4b_loop",
+      "step": 1500,
+      "tokens_b": 0.786432
+    },
+    {
+      "benchmarks": {
+        "aime24": {
+          "accuracy": 44.166666666666664,
+          "correct": 106,
+          "samples": 240,
+          "questions": 30,
+          "samples_per_question": 8,
+          "median_tokens": 16211.0,
+          "truncated_pct": 49.166666666666664
+        },
+        "aime25": {
+          "accuracy": 35.416666666666664,
+          "correct": 85,
+          "samples": 240,
+          "questions": 30,
+          "samples_per_question": 8,
+          "median_tokens": 16384.0,
+          "truncated_pct": 52.916666666666664
+        },
+        "math500": {
+          "accuracy": 89.6,
+          "correct": 448,
+          "samples": 500,
+          "questions": 500,
+          "samples_per_question": 1,
+          "median_tokens": 3483.5,
+          "truncated_pct": 7.8
+        },
+        "gpqa": {
+          "accuracy": 34.84848484848485,
+          "correct": 69,
+          "samples": 198,
+          "questions": 198,
+          "samples_per_question": 1,
+          "median_tokens": 14671.0,
+          "truncated_pct": 44.94949494949495
+        }
+      },
+      "source_run": "qwen3_4b_reason_v2_etd_s17_step2250_indep",
+      "source_hashes": {
+        "graded.jsonl": "076dbbbbac0bf3e9bade4f8d8606365fddeee18933c7d353a501df73607461ea",
+        "summary.json": "591e7c8e8ef3c540b941f1b86746f84d697d37f762070693e1eeca61b7f1ed1c",
+        "generate_args.json": "1ac5af4a4326e3ca4e4f192d2a4763892afbe3a46192667bd0f2dc555ba37dd6"
+      },
+      "series": "qwen3_4b_loop",
+      "step": 2250,
+      "tokens_b": 1.179648
+    },
+    {
+      "benchmarks": {
+        "aime24": {
+          "accuracy": 42.5,
+          "correct": 102,
+          "samples": 240,
+          "questions": 30,
+          "samples_per_question": 8,
+          "median_tokens": 15460.0,
+          "truncated_pct": 48.333333333333336
+        },
+        "aime25": {
+          "accuracy": 36.666666666666664,
+          "correct": 88,
+          "samples": 240,
+          "questions": 30,
+          "samples_per_question": 8,
+          "median_tokens": 16384.0,
+          "truncated_pct": 55.416666666666664
+        },
+        "math500": {
+          "accuracy": 90.4,
+          "correct": 452,
+          "samples": 500,
+          "questions": 500,
+          "samples_per_question": 1,
+          "median_tokens": 3114.5,
+          "truncated_pct": 7.4
+        },
+        "gpqa": {
+          "accuracy": 37.878787878787875,
+          "correct": 75,
+          "samples": 198,
+          "questions": 198,
+          "samples_per_question": 1,
+          "median_tokens": 11717.0,
+          "truncated_pct": 27.272727272727273
+        }
+      },
+      "source_run": "qwen3_4b_reason_v2_etd_s17_step3000_indep",
+      "source_hashes": {
+        "graded.jsonl": "a21b908fdabb26c8c6b19f1ff810940c8ebbf54542a253e77ae70ff3a0d3cbb5",
+        "summary.json": "eae64aefc46e85aa851711be59b8333ff4df2b6886dfc6e6df272d8227167e47",
+        "generate_args.json": "66e1b0ff2587fce466d55b040a761af9a5ca5b630d6c0d1564403e368d15b439"
+      },
+      "series": "qwen3_4b_loop",
+      "step": 3000,
+      "tokens_b": 1.572864
+    },
+    {
+      "benchmarks": {
+        "aime24": {
+          "accuracy": 24.166666666666668,
+          "correct": 58,
+          "samples": 240,
+          "questions": 30,
+          "samples_per_question": 8,
+          "median_tokens": 16384.0,
+          "truncated_pct": 59.166666666666664
+        },
+        "aime25": {
+          "accuracy": 22.5,
+          "correct": 54,
+          "samples": 240,
+          "questions": 30,
+          "samples_per_question": 8,
+          "median_tokens": 16384.0,
+          "truncated_pct": 59.166666666666664
+        },
+        "math500": {
+          "accuracy": 83.6,
+          "correct": 418,
+          "samples": 500,
+          "questions": 500,
+          "samples_per_question": 1,
+          "median_tokens": 2927.5,
+          "truncated_pct": 10.6
+        },
+        "gpqa": {
+          "accuracy": 27.77777777777778,
+          "correct": 55,
+          "samples": 198,
+          "questions": 198,
+          "samples_per_question": 1,
+          "median_tokens": 16384.0,
+          "truncated_pct": 52.525252525252526
+        }
+      },
+      "source_run": "qwen3_4b_reason_v2_dense_s17_step750_indep",
+      "source_hashes": {
+        "graded.jsonl": "174d3f47c609b431264555bcb04507820eb073a9a6798c271ea61be5b4912e9f",
+        "summary.json": "1653cbb3c4139f4a4e6ed462ca355e2dff2559479afa1395793203f6db5ad865",
+        "generate_args.json": "0668748160461ca5e0032c77ce60a599f097551edf96e2d7661eee46f435b287"
+      },
+      "series": "qwen3_4b_dense",
+      "step": 750,
+      "tokens_b": 0.393216
+    },
+    {
+      "benchmarks": {
+        "aime24": {
+          "accuracy": 26.25,
+          "correct": 63,
+          "samples": 240,
+          "questions": 30,
+          "samples_per_question": 8,
+          "median_tokens": 16384.0,
+          "truncated_pct": 64.16666666666667
+        },
+        "aime25": {
+          "accuracy": 20.0,
+          "correct": 48,
+          "samples": 240,
+          "questions": 30,
+          "samples_per_question": 8,
+          "median_tokens": 16384.0,
+          "truncated_pct": 64.16666666666667
+        },
+        "math500": {
+          "accuracy": 84.0,
+          "correct": 420,
+          "samples": 500,
+          "questions": 500,
+          "samples_per_question": 1,
+          "median_tokens": 3753.5,
+          "truncated_pct": 14.0
+        },
+        "gpqa": {
+          "accuracy": 27.77777777777778,
+          "correct": 55,
+          "samples": 198,
+          "questions": 198,
+          "samples_per_question": 1,
+          "median_tokens": 16384.0,
+          "truncated_pct": 52.525252525252526
+        }
+      },
+      "source_run": "qwen3_4b_reason_v2_dense_s17_step1500_indep",
+      "source_hashes": {
+        "graded.jsonl": "4e12da75dc0f930b9ca2a6166485f60d77540abb97eac39dda1a5c28a5103b67",
+        "summary.json": "a580df6071656166e927eb38ff0d50f2e330915f1692e370730780e071f74800",
+        "generate_args.json": "7ac14dcdd1cf524f345e72068bf742fbf49ebee6a3ce18bdd5e4be3c998e8e3a"
+      },
+      "series": "qwen3_4b_dense",
+      "step": 1500,
+      "tokens_b": 0.786432
+    },
+    {
+      "benchmarks": {
+        "aime24": {
+          "accuracy": 31.25,
+          "correct": 75,
+          "samples": 240,
+          "questions": 30,
+          "samples_per_question": 8,
+          "median_tokens": 16384.0,
+          "truncated_pct": 54.166666666666664
+        },
+        "aime25": {
+          "accuracy": 28.333333333333332,
+          "correct": 68,
+          "samples": 240,
+          "questions": 30,
+          "samples_per_question": 8,
+          "median_tokens": 16384.0,
+          "truncated_pct": 52.083333333333336
+        },
+        "math500": {
+          "accuracy": 86.8,
+          "correct": 434,
+          "samples": 500,
+          "questions": 500,
+          "samples_per_question": 1,
+          "median_tokens": 2932.5,
+          "truncated_pct": 9.0
+        },
+        "gpqa": {
+          "accuracy": 29.7979797979798,
+          "correct": 59,
+          "samples": 198,
+          "questions": 198,
+          "samples_per_question": 1,
+          "median_tokens": 14336.0,
+          "truncated_pct": 48.98989898989899
+        }
+      },
+      "source_run": "qwen3_4b_reason_v2_dense_s17_step2250_indep",
+      "source_hashes": {
+        "graded.jsonl": "bcb9bedbf20038bf35d1df455d010fe022bdfdfedde91580a74a7b70260cd39e",
+        "summary.json": "5d3e4fc7e4cae7c419e71841c62a0cac6d0317be0405abbd32909d174156cf90",
+        "generate_args.json": "2fe39c48dc48dbb62d53c2fd0f269559d090c99af8be7d7a63020ad48a274f8a"
+      },
+      "series": "qwen3_4b_dense",
+      "step": 2250,
+      "tokens_b": 1.179648
+    },
+    {
+      "benchmarks": {
+        "aime24": {
+          "accuracy": 34.583333333333336,
+          "correct": 83,
+          "samples": 240,
+          "questions": 30,
+          "samples_per_question": 8,
+          "median_tokens": 16384.0,
+          "truncated_pct": 54.583333333333336
+        },
+        "aime25": {
+          "accuracy": 29.166666666666668,
+          "correct": 70,
+          "samples": 240,
+          "questions": 30,
+          "samples_per_question": 8,
+          "median_tokens": 16384.0,
+          "truncated_pct": 58.333333333333336
+        },
+        "math500": {
+          "accuracy": 87.0,
+          "correct": 435,
+          "samples": 500,
+          "questions": 500,
+          "samples_per_question": 1,
+          "median_tokens": 3893.0,
+          "truncated_pct": 8.4
+        },
+        "gpqa": {
+          "accuracy": 36.36363636363637,
+          "correct": 72,
+          "samples": 198,
+          "questions": 198,
+          "samples_per_question": 1,
+          "median_tokens": 14157.0,
+          "truncated_pct": 37.37373737373738
+        }
+      },
+      "source_run": "qwen3_4b_reason_v2_dense_s17_step3000_indep",
+      "source_hashes": {
+        "graded.jsonl": "0060b61762070f4d818a999207ec24669a6d52006c9b60d64fc92158597c8591",
+        "summary.json": "8131f848c0ad67191389ab689b2e95c6404c5ecf60cb8a9682be778ccb040c78",
+        "generate_args.json": "7142bb6aa68ed6698de936571ba2ad03b86f00592fc6a265e5721f3531883c41"
+      },
+      "series": "qwen3_4b_dense",
+      "step": 3000,
+      "tokens_b": 1.572864
+    },
+    {
+      "benchmarks": {
+        "aime24": {
+          "accuracy": 33.75,
+          "correct": 81,
+          "samples": 240,
+          "questions": 30,
+          "samples_per_question": 8,
+          "median_tokens": 16384.0,
+          "truncated_pct": 54.166666666666664
+        },
+        "aime25": {
+          "accuracy": 32.083333333333336,
+          "correct": 77,
+          "samples": 240,
+          "questions": 30,
+          "samples_per_question": 8,
+          "median_tokens": 16384.0,
+          "truncated_pct": 54.166666666666664
+        },
+        "math500": {
+          "accuracy": 90.6,
+          "correct": 453,
+          "samples": 500,
+          "questions": 500,
+          "samples_per_question": 1,
+          "median_tokens": 3323.0,
+          "truncated_pct": 6.6
+        },
+        "gpqa": {
+          "accuracy": 31.31313131313131,
+          "correct": 62,
+          "samples": 198,
+          "questions": 198,
+          "samples_per_question": 1,
+          "median_tokens": 12537.5,
+          "truncated_pct": 34.343434343434346
+        }
+      },
+      "source_run": "qwen3_4b_reason_v2_dense_s17_step3750_indep",
+      "source_hashes": {
+        "graded.jsonl": "ef8c1cbe17bb1eb11b38a0ddad401b376ed60e787ff5a744d57c7c92014b46ea",
+        "summary.json": "94269b9d0ce7469d6bf0628d06abd2ef9bd5f8abdc4231cc71c1c11c5467cdbe",
+        "generate_args.json": "1450deab9ea6087ffa8d171542883e6a422210f0ada769bd60fcea40799985c1"
+      },
+      "series": "qwen3_4b_dense",
+      "step": 3750,
+      "tokens_b": 1.96608
+    },
+    {
+      "benchmarks": {
+        "aime24": {
+          "accuracy": 37.916666666666664,
+          "correct": 91,
+          "samples": 240,
+          "questions": 30,
+          "samples_per_question": 8,
+          "median_tokens": 15637.0,
+          "truncated_pct": 46.25
+        },
+        "aime25": {
+          "accuracy": 31.666666666666668,
+          "correct": 76,
+          "samples": 240,
+          "questions": 30,
+          "samples_per_question": 8,
+          "median_tokens": 16384.0,
+          "truncated_pct": 50.833333333333336
+        },
+        "math500": {
+          "accuracy": 90.0,
+          "correct": 450,
+          "samples": 500,
+          "questions": 500,
+          "samples_per_question": 1,
+          "median_tokens": 3196.5,
+          "truncated_pct": 6.6
+        },
+        "gpqa": {
+          "accuracy": 43.43434343434343,
+          "correct": 86,
+          "samples": 198,
+          "questions": 198,
+          "samples_per_question": 1,
+          "median_tokens": 11267.5,
+          "truncated_pct": 24.747474747474747
+        }
+      },
+      "source_run": "qwen3_4b_reason_v2_dense_s17_step4500_indep",
+      "source_hashes": {
+        "graded.jsonl": "bae36ffb47c19959ebb231afb8cdab4cc786bf814e85d89b990641f30ae04ec9",
+        "summary.json": "62a587973f3dc2a2e2714cd4b42fa034fcb468970a9d9395c3291886c89b53a6",
+        "generate_args.json": "fc8657ceb368260c1621a2ae6106e90209bb97a19f66b03437d4825882d4bf47"
+      },
+      "series": "qwen3_4b_dense",
+      "step": 4500,
+      "tokens_b": 2.359296
+    }
+  ],
+  "limitations": [
+    "Single training seed. AIME has 30 questions per year, sampled 8 times each.",
+    "Panel-specific y-scales. 4B loop and dense use matched training data."
+  ]
+}
