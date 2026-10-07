@@ -11,7 +11,7 @@ open-loopify loops a span of a released model's layers — for Qwen3-4B, layers 
 times, 54 blocks of compute per token instead of 36 — mid-trains it on open reasoning data, and
 exports an ordinary checkpoint that `transformers` and vLLM load with no custom code.
 
-**🤗 Weights:** [tyzhu/open-loopify-Qwen3-4B](https://huggingface.co/tyzhu/open-loopify-Qwen3-4B) on the Hugging Face Hub.
+**🤗 Weights:** [Qwen3-4B](https://huggingface.co/tyzhu/open-loopify-Qwen3-4B) · [Qwen3-1.7B (step 3000)](https://huggingface.co/tyzhu/open-loopify-Qwen3-1.7B) on the Hugging Face Hub.
 
 ## ✨ Highlights
 
