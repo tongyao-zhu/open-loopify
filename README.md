@@ -39,17 +39,25 @@ Qwen3-4B-Base, layers [13, 22) looped 3×, mid-trained on 1.57B tokens of open r
 Given 28k tokens to think instead of 16k (`--max-tokens 28672` in [Evaluate](#-evaluate)) it reaches
 50.0 / 41.2 / 24.6 on AIME 2024 / AIME 2025 / HMMT.
 
-**Looped vs dense on the same data.** Both start from Qwen3-4B-Base and see the same tokens in
+**Qwen3-4B: looped vs dense on the same data.** Both start from Qwen3-4B-Base and see the same tokens in
 the same order; the only difference is the loop.
 
-![Looped vs dense accuracy against training tokens on AIME 2024, AIME 2025, MATH-500 and GPQA-Diamond](docs/loop_vs_dense_tokens.png)
+![Qwen3-4B looped and dense curves, plus six Qwen3-1.7B looped checkpoints, on AIME 2024, AIME 2025, MATH-500 and GPQA-Diamond](docs/loop_vs_dense_tokens.png)
 
-At equal training tokens the looped model is ahead almost everywhere (15 of 16 comparisons). At
+For Qwen3-4B, at equal training tokens the looped model is ahead almost everywhere (15 of 16 comparisons). At
 equal compute — the dense model trained 1.5× longer — the looped model still leads on competition
 math (AIME 2024/25 and HMMT Feb 2025: +3.6 points, 95% CI [+0.6, +6.8]; +6.5 [+2.5, +10.7] with
 28k tokens to think), ties on MATH-500 and trails on GPQA-Diamond.
 
-All models are scored the same way; see [Evaluate](#-evaluate).
+The gold dashed curves show **Qwen3-1.7B**, with layers [12, 19) looped 3× and
+six measured checkpoints from steps 500 to 3000 (0.26–1.57B training tokens). This run uses
+complete reasoning traces of at most 8,000 tokens and has **no matched 1.7B dense control**;
+it is not an ablation against the 4B dense model. MATH-500 rises from 51.4% to 70.0%.
+
+All four panels use a 16k output limit, temperature 0.6 and top-p 0.95. AIME reports the
+average accuracy across eight samples per question (30 questions per year), not pass@8;
+MATH-500 and GPQA-Diamond use one sample. Results use one training seed, and different
+batch schedules need not reproduce identical sampled text. See [Evaluate](#-evaluate).
 
 ### OLMo-2-1B: checkpoint performance
 
